@@ -1,17 +1,10 @@
 package org_treathunter.java_university_7th_semester_ip_lab1_json_file_autontification_app;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-{
-    /**
-     * Rigorous Test :-)
-     */
+public class MainTest {
     @Test
     public void shouldAnswerWithTrue()
     {
