@@ -1,0 +1,5 @@
+package org_treathunter.java_university_7th_semester_ip_lab1_json_file_autontification_app.file_json_storage_system;
+
+public class JsonFileStorageTest {
+
+}
