@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonFileStorage 
 {
-	final private String DataBasePath = "database.json";
+	public static final String DataBasePath = "database.json";
 	
 	private ObjectMapper mapper = new ObjectMapper();
 	private Path path = Paths.get(DataBasePath);
