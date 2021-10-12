@@ -1,5 +1,7 @@
 package org_treathunter.java_university_7th_semester_ip_lab1_json_file_autontification_app.file_json_storage_system;
 
+import java.util.Objects;
+
 public class User 
 {
 	public enum Role
@@ -79,5 +81,22 @@ public class User
 	public String toString() 
 	{
 		return username+"|"+ password +"|"+ role.name() +"|"+ isBanned +"|"+  passwordRestictions;
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+	    if (this == o)
+	        return true;
+	    if (o == null)
+	        return false;
+	    if (getClass() != o.getClass())
+	        return false;
+	    User user = (User) o;
+	    return Objects.equals(username, user.getUsername())
+	            && Objects.equals(password,user.getPassword())
+	            && Objects.equals(role, user.role)
+	            && Objects.equals(isBanned, user.isBanned())
+	            && Objects.equals(passwordRestictions, user.isPasswordRestictions());
 	}
 }
