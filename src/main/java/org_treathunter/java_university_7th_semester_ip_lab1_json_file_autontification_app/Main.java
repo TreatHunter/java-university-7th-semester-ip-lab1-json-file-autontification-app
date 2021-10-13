@@ -10,9 +10,9 @@ public class Main {
 	{
 		try
 		{
-			MainFrame fr = new MainFrame();
+			new MainFrame();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(new JFrame(), "Exceprion: "+ e.getMessage());
+			JOptionPane.showMessageDialog(new JFrame(), "Exception: "+ e.getMessage());
 			System.out.println(e.getMessage());
 			System.exit(0);
 		}
