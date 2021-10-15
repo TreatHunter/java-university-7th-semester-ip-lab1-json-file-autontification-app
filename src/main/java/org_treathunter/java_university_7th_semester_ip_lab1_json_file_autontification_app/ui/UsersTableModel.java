@@ -2,8 +2,11 @@ package org_treathunter.java_university_7th_semester_ip_lab1_json_file_autontifi
 
 import java.util.ArrayList;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
+import org_treathunter.java_university_7th_semester_ip_lab1_json_file_autontification_app.DataBaseSystem.DatabaseSystem;
 import org_treathunter.java_university_7th_semester_ip_lab1_json_file_autontification_app.file_json_storage_system.User;
 
 public class UsersTableModel extends AbstractTableModel
@@ -13,7 +16,7 @@ public class UsersTableModel extends AbstractTableModel
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final ArrayList<User> usersList;
+	DatabaseSystem db;
      
     private final String[] columnNames = new String[] {
             "Имя пользователя", "Ограничение на пароль", "Блокирован"
@@ -22,9 +25,9 @@ public class UsersTableModel extends AbstractTableModel
         String.class, Boolean.class, Boolean.class
     };
  
-    public UsersTableModel(ArrayList<User> usersList)
+    public UsersTableModel(DatabaseSystem db)
     {
-        this.usersList = usersList;
+        this.db = db;
     }
      
     @Override
@@ -48,13 +51,13 @@ public class UsersTableModel extends AbstractTableModel
     @Override
     public int getRowCount()
     {
-        return usersList.size();
+        return db.getUsers().size();
     }
  
     @Override
     public Object getValueAt(int rowIndex, int columnIndex)
     {
-        User user = usersList.get(rowIndex);
+        User user = db.getUsers().get(rowIndex);
         if(0 == columnIndex) {
             return user.getUsername();
         }
@@ -66,6 +69,27 @@ public class UsersTableModel extends AbstractTableModel
         }
         return null;
     }
+
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        User user = db.getUsers().get(row);
+		if(user.getRole() == User.Role.admin)
+			   return;
+			if(col == 1)
+			{
+				user.setPasswordRestictions(!user.isPasswordRestictions());
+			}else if(col == 2){
+				user.setBanned(!user.isBanned());
+			}
+			try {
+				db.SaveChangesToFile();
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(new JFrame(), "Exception: "+ e1.getMessage());
+				System.out.println(e1.getMessage());
+			}
+        fireTableCellUpdated(row, col);
+    }
+    
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex)
     {
