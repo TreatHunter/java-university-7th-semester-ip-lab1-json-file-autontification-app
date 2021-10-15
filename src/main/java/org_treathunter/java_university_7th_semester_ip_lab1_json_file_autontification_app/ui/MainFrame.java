@@ -27,6 +27,7 @@ public class MainFrame
 	JMenuItem addUser;
 	JMenuItem showUsers;
 	JMenuItem exit;	
+	User currientUser = null;
 	
 	public MainFrame() throws Exception
 	{
@@ -62,6 +63,14 @@ public class MainFrame
 		                                    "Пользователь не найден",
 		                                    JOptionPane.ERROR_MESSAGE);
 	                        	}
+	                        	else if(user.isBanned())
+	                        	{
+	                        		JOptionPane.showMessageDialog(fr,
+		                                    "Пользователь забанен",
+		                                    "Пользователь забанен",
+		                                    JOptionPane.ERROR_MESSAGE);	
+	                        		user = null;
+	                        	}
 	                        }
 	                        else 
 	                        {
@@ -72,7 +81,7 @@ public class MainFrame
 						{
 							while(user.getPassword().length() == 0)
 							{
-								PasswordChangeDialog pswrdChngDlg = new PasswordChangeDialog(fr);
+								PasswordChangeDialog pswrdChngDlg = new PasswordChangeDialog(fr,user.isPasswordRestictions());
 								pswrdChngDlg.setVisible(true);
 		                        if(pswrdChngDlg.isLoginAttempt())
 		                        {
@@ -132,6 +141,7 @@ public class MainFrame
                                 "Успешный вход",
                                 JOptionPane.INFORMATION_MESSAGE
                                 );
+                		currientUser = user;
                 		loginButton.setVisible(false);
                 		usersMenu.setVisible(true);
                 		if(user.getRole().equals(User.Role.user))
@@ -164,11 +174,135 @@ public class MainFrame
 		usersMenu = new JMenu("Пользователи");
 		
 		passwordChange = new JMenuItem("Смена пароля");
-		addUser = new JMenuItem("Новый пользователь");
-		showUsers = new JMenuItem("Все пользователи");
+		addUser = new JMenuItem("Добавить пользователя");
+		showUsers = new JMenuItem("Показать,настроить пользователей");
 		exit = new JMenuItem("Выход");
 		
 		//action listeners
+		showUsers.addActionListener(new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e) 
+					{
+						UsersTableDialog tableDialog = new UsersTableDialog(fr,db);
+						tableDialog.setVisible(true);
+						
+					}
+				});
+		exit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				currientUser = null;
+				usersMenu.setVisible(false);
+				loginButton.setVisible(true);
+			}
+		});
+		
+		addUser.addActionListener(new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						do
+						{
+							AddUserDialog addUserDlg = new AddUserDialog(fr);
+							addUserDlg.setVisible(true);
+							if(!addUserDlg.isLoginAttempt())
+							{
+								return;
+							}
+							if(db.getUserByUsername(addUserDlg.getUsername()) == null )
+							{
+								db.getUsers().add(new User(addUserDlg.getUsername(),"",User.Role.user,false,addUserDlg.getPasswordRestrictions()));
+								try {
+									db.SaveChangesToFile();
+								} catch (Exception e1) {
+									JOptionPane.showMessageDialog(new JFrame(), "Exception: "+ e1.getMessage());
+									System.out.println(e1.getMessage());
+									return;
+								}
+		                		JOptionPane.showMessageDialog(fr,
+		                                "Пользователь добавлен",
+		                                "Успешное добавление",
+		                                JOptionPane.INFORMATION_MESSAGE
+		                                );
+							}
+							else
+							{
+                        		JOptionPane.showMessageDialog(fr,
+	                                    "Это имя пользователя уже занято",
+	                                    "Ошибка",
+	                                    JOptionPane.ERROR_MESSAGE);
+							}
+						}while(true);
+					}
+				});
+		
+		passwordChange.addActionListener(new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{	
+						do
+						{
+							PasswordDialog pswrdDlg = new PasswordDialog(fr);
+							pswrdDlg.setVisible(true);
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+	                        if(pswrdDlg.isLoginAttempt())
+	                        {
+	                        	if(currientUser.getPassword().equals(pswrdDlg.getPassword()))
+	                        	{
+	                        		break;
+	                        	}else {
+
+	                        		JOptionPane.showMessageDialog(fr,
+		                                    "Не правильный пароль",
+		                                    "Не правильный пароль",
+		                                    JOptionPane.ERROR_MESSAGE);
+	                        	}
+	                        }
+	                        else 
+	                        {
+	                        	return; 
+	                        }  
+						}while(true);	
+						
+						String newPassword = "";
+						while(newPassword.length() == 0)
+						{
+							PasswordChangeDialog pswrdChngDlg = new PasswordChangeDialog(fr,currientUser.isPasswordRestictions());
+							pswrdChngDlg.setVisible(true);
+	                        if(pswrdChngDlg.isLoginAttempt())
+	                        {
+	                        	newPassword = pswrdChngDlg.getResPassword();
+	                        }
+	                        else 
+	                        {
+	                        	return; 
+	                        }  								
+						}
+						try {
+							currientUser.setPassword(newPassword);
+							db.SaveChangesToFile();
+	                		JOptionPane.showMessageDialog(fr,
+	                                "Пароль изменён",
+	                                "Пароль изменён",
+	                                JOptionPane.INFORMATION_MESSAGE
+	                                );							
+						} catch (Exception ex) {
+							JOptionPane.showMessageDialog(new JFrame(), "Exception: "+ ex.getMessage());
+							System.out.println(ex.getMessage());
+							System.exit(0);
+												
+						}
+					}
+				});
 		
 		usersMenu.add(passwordChange);
 		usersMenu.add(addUser);
@@ -184,6 +318,15 @@ public class MainFrame
 		JMenuItem aboutProgram = new JMenuItem("О прогамме");
 		
 		//action listeners
+		aboutProgram.addActionListener(new ActionListener()
+				{
+					@Override
+					public void actionPerformed(ActionEvent e)
+					{
+						InfoDialog info = new InfoDialog(fr);
+						info.setVisible(true);
+					}
+				});
 		
 		reference.add(aboutProgram);
 		return reference;

@@ -33,7 +33,7 @@ public class PasswordChangeDialog extends JDialog
     private boolean loginAttempt = false;
     private String resPassword = "";
     
-    public PasswordChangeDialog(Frame parent) 
+    public PasswordChangeDialog(Frame parent,boolean passwordRestrictions) 
     {
         super(parent, "Ввод нового пароля", true);
         //
@@ -93,7 +93,7 @@ public class PasswordChangeDialog extends JDialog
                             "Пароль не может быть пустым",
                             JOptionPane.ERROR_MESSAGE);            		
             	}
-            	else if(!Pattern.matches(numberRegex,pas1) | !Pattern.matches(mathOpRegex,pas1))
+            	else if( (!Pattern.matches(numberRegex,pas1) | !Pattern.matches(mathOpRegex,pas1) ) & passwordRestrictions)
             	{
             		JOptionPane.showMessageDialog(PasswordChangeDialog.this,
             				"Пароль должен содержать числа и знаки / * + -",
