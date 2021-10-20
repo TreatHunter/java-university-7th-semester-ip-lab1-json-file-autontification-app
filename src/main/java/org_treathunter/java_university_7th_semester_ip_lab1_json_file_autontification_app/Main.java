@@ -7,7 +7,7 @@ import org_treathunter.java_university_7th_semester_ip_lab1_json_file_autontific
 
 public class Main {
 	public static void main(String[] args) 
-	{
+	{ 
 		try
 		{
 			new MainFrame();
