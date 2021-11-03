@@ -31,9 +31,8 @@ public class PasswordChangeDialog extends JDialog
     private JButton btnLogin;
     private JButton btnCancel;
     private boolean loginAttempt = false;
-    private String resPassword = "";
     
-    public PasswordChangeDialog(Frame parent,boolean passwordRestrictions) 
+    public PasswordChangeDialog(Frame parent) 
     {
         super(parent, "Ввод нового пароля", true);
         //
@@ -71,40 +70,8 @@ public class PasswordChangeDialog extends JDialog
 
         btnLogin.addActionListener(new ActionListener() 
         {
-        	String numberRegex = ".*[0-9].*";	
-        	String mathOpRegex = ".*[/ * + -].*";
-        	
             public void actionPerformed(ActionEvent e) 
             {
-            	String pas1 = getPassword();
-            	String pas2 = getPasswordConfirm();
-
-            	if(!pas1.equals(pas2))
-            	{
-            		JOptionPane.showMessageDialog(PasswordChangeDialog.this,
-                            "Пароли не совпадают",
-                            "Пароли не совпадают",
-                            JOptionPane.ERROR_MESSAGE);
-            	}
-            	else if(pas1.length() == 0)
-            	{
-            		JOptionPane.showMessageDialog(PasswordChangeDialog.this,
-                            "Пароль не может быть пустым",
-                            "Пароль не может быть пустым",
-                            JOptionPane.ERROR_MESSAGE);            		
-            	}
-            	else if( (!Pattern.matches(numberRegex,pas1) | !Pattern.matches(mathOpRegex,pas1) ) & passwordRestrictions)
-            	{
-            		JOptionPane.showMessageDialog(PasswordChangeDialog.this,
-            				"Пароль должен содержать числа и знаки / * + -",
-            				"Пароль не cовпадает по требованиям",
-                            
-                            JOptionPane.ERROR_MESSAGE);              		
-            	}
-            	else
-            	{
-            		resPassword = pas1;
-            	}
             	loginAttempt = true;
                 dispose();
             }
@@ -131,19 +98,14 @@ public class PasswordChangeDialog extends JDialog
         setLocationRelativeTo(parent);
     }
 
-    private String getPassword() 
+    public String getPassword() 
     {
         return new String(pfPassword.getPassword());
     }    
     
-    private String getPasswordConfirm() 
+    public String getPasswordConfirm() 
     {
         return new String(pfPasswordConfirm.getPassword());
-    }
-    
-    public String getResPassword() 
-    {
-    	return resPassword;
     }
 
     public boolean isLoginAttempt() 

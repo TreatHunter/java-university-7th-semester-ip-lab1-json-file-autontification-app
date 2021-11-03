@@ -1,6 +1,7 @@
 package org_treathunter.java_university_7th_semester_ip_lab1_json_file_autontification_app.file_json_storage_system;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class User 
 {
@@ -75,6 +76,26 @@ public class User
 		this.role = role;
 		this.isBanned = isBanned;
 		this.passwordRestictions = passwordRestictions;
+	}
+	
+	public boolean isPasswordFollowsPasswordRestrictionsOfUser(String password)
+	{
+		if(!this.passwordRestictions)
+			return true;
+		else
+		{
+        	String numberRegex = ".*[0-9].*";	
+        	String mathOpRegex = ".*[/ * + -].*";
+        	if(!Pattern.matches(numberRegex,password) | !Pattern.matches(mathOpRegex,password))
+        	{
+        		return false;
+        	}else
+        	{
+        		return true;
+        	}
+        		
+		}
+		
 	}
 	
 	@Override

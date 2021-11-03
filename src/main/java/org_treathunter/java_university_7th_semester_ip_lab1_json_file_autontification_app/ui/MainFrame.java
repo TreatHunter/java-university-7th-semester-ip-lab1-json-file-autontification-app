@@ -77,15 +77,41 @@ public class MainFrame
 	                        	return;
 	                        }        
 						}
-						if(user.getPassword().length() == 0)
+						if(user.getPassword().length() == 0 | !user.isPasswordFollowsPasswordRestrictionsOfUser(user.getPassword()))
 						{
-							while(user.getPassword().length() == 0)
+							while(user.getPassword().length() == 0 | !user.isPasswordFollowsPasswordRestrictionsOfUser(user.getPassword()))
 							{
-								PasswordChangeDialog pswrdChngDlg = new PasswordChangeDialog(fr,user.isPasswordRestictions());
+								PasswordChangeDialog pswrdChngDlg = new PasswordChangeDialog(fr);
 								pswrdChngDlg.setVisible(true);
 		                        if(pswrdChngDlg.isLoginAttempt())
 		                        {
-		                        	user.setPassword(pswrdChngDlg.getResPassword());
+		                        	String password = pswrdChngDlg.getPassword();
+		                        	String passwordConfirm = pswrdChngDlg.getPasswordConfirm();
+		                           	if(!password.equals(passwordConfirm))
+		                        	{
+		                        		JOptionPane.showMessageDialog(fr,
+		                                        "Пароли не совпадают",
+		                                        "Пароли не совпадают",
+		                                        JOptionPane.ERROR_MESSAGE);
+		                        	}
+		                        	else if(password.length() == 0)
+		                        	{
+		                        		JOptionPane.showMessageDialog(fr,
+		                                        "Пароль не может быть пустым",
+		                                        "Пароль не может быть пустым",
+		                                        JOptionPane.ERROR_MESSAGE);            		
+		                        	}
+		                        	else if(!user.isPasswordFollowsPasswordRestrictionsOfUser(password))
+		                        	{
+		                        		JOptionPane.showMessageDialog(fr,
+		                        				"Пароль должен содержать числа и знаки / * + -",
+		                        				"Пароль не cовпадает по требованиям",
+		                                        
+		                                        JOptionPane.ERROR_MESSAGE);              		
+		                        	}else
+		                        	{
+		                        		user.setPassword(password);
+		                        	}
 		                        }
 		                        else 
 		                        {
@@ -94,6 +120,7 @@ public class MainFrame
 							}
 							try {
 								db.SaveChangesToFile();
+								return;
 							} catch (Exception ex) {
 								JOptionPane.showMessageDialog(new JFrame(), "Exception: "+ ex.getMessage());
 								System.out.println(ex.getMessage());
@@ -274,18 +301,43 @@ public class MainFrame
 						}while(true);	
 						
 						String newPassword = "";
-						while(newPassword.length() == 0)
+
+						while(newPassword.length() == 0 | !currientUser.isPasswordFollowsPasswordRestrictionsOfUser(newPassword))
 						{
-							PasswordChangeDialog pswrdChngDlg = new PasswordChangeDialog(fr,currientUser.isPasswordRestictions());
+							PasswordChangeDialog pswrdChngDlg = new PasswordChangeDialog(fr);
 							pswrdChngDlg.setVisible(true);
-	                        if(pswrdChngDlg.isLoginAttempt())
-	                        {
-	                        	newPassword = pswrdChngDlg.getResPassword();
-	                        }
-	                        else 
-	                        {
-	                        	return; 
-	                        }  								
+		                    if(!pswrdChngDlg.isLoginAttempt())
+		                    {
+		                        return; 
+		                    }else
+		                    {
+		                       	String password = pswrdChngDlg.getPassword();
+		                       	String passwordConfirm = pswrdChngDlg.getPasswordConfirm();
+		                       	if(!password.equals(passwordConfirm))
+		                       	{
+		                       		JOptionPane.showMessageDialog(fr,
+		                                     "Пароли не совпадают",
+		                                     "Пароли не совпадают",
+		                                     JOptionPane.ERROR_MESSAGE);
+		                       	}
+		                       	else if(password.length() == 0)
+		                       	{
+		                       		JOptionPane.showMessageDialog(fr,
+		                                     "Пароль не может быть пустым",
+		                                     "Пароль не может быть пустым",
+		                                     JOptionPane.ERROR_MESSAGE);            		
+		                        }
+		                       	else if(!currientUser.isPasswordFollowsPasswordRestrictionsOfUser(password))
+		                       	{
+		                       		JOptionPane.showMessageDialog(fr,
+		                       				"Пароль должен содержать числа и знаки / * + -",
+		                       				"Пароль не cовпадает по требованиям",                      
+		                                    JOptionPane.ERROR_MESSAGE);              		
+		                        }else
+		                       	{
+		                       		newPassword = password;
+		                       	}
+		                    }
 						}
 						try {
 							currientUser.setPassword(newPassword);
